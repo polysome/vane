@@ -12,6 +12,7 @@ QUAD (cyclic, LRS)
 extended serpent -/ threefish cascade blockcipher
 
 Lead developer David Carlier
+
 Contributors Milica Hadži-Tanović, Yiwen Sun, Thom Lauret
 
 This library was built with contributions from; John Baena, Tao Chengdong, Jintai Ding, Ming-Shing Chen, Albrecht Petzoldt and Ishtiaq Shah at www.cdc.informatik-tu-darmstadt.de
