@@ -1,0 +1,289 @@
+
+//New cryptosystem
+clear;
+
+function NEW(s,t,u,v,n,q)
+	m := s*u + s*v;
+	G<a>:=GF(q);
+	P<[x]> := PolynomialRing( G, n ) ;  
+        Z := IntegerRing();
+        SET := [x[i]: i in [1..n]];
+	A := ZeroMatrix(P,s,t) ;
+	B := ZeroMatrix(P,t,u) ;
+	C := ZeroMatrix(P,t,v) ;
+	temp := P!0;
+	for i in [1..s] do
+		for j in [1..t] do
+			temp := &+[Random(G)*x[k]: k in [1..n]];
+			A[i,j] := temp;
+		end for;
+	end for;
+	for i in [1..t] do
+		for j in [1..u] do
+			temp := &+[Random(G)*x[k]: k in [1..n]];
+			B[i,j] := temp;
+		end for;
+	end for;
+	for i in [1..t] do
+		for j in [1..v] do
+			temp := &+[Random(G)*x[k]: k in [1..n]];
+			C[i,j] := temp;
+		end for;
+	end for;
+        E1 := A * B;
+        E2 := A * C;
+	f := [];
+        for i in [1..s] do
+            for j in [1..u] do
+                  f[(i-1)*u+j]:= E1[i,j];
+             end for;
+        end for;
+        for i in [1..s] do
+            for j in [1..v] do
+                  f[s*u+(i-1)*v+j]:= E2[i,j];
+             end for;
+        end for;
+	repeat
+  		 L1 := Matrix(G,n,n,[<i,j,Random(G)>: i,j in [1..n]]) ;
+	until  Determinant( L1 ) ne 0 ;
+    	S :=  [&+[L1[j][i]*x[i] : i in [1..n]] : j in [1..n]];
+	fb := [];
+        for i in [1..m] do
+		fb[i] := Evaluate( f[i], S);
+	end for;
+	repeat
+  		 L2 := Matrix(G,m,m,[<i,j,Random(G)>: i,j in [1..m]]) ;
+	until  Determinant( L2 ) ne 0 ;
+	publickey := [&+[L2[j][i]*fb[i] : i in [1..m]] : j in [1..m]];
+     return publickey,f,L1,L2,A,B,C;
+end function;
+
+
+
+function  polytovector(qrpoly, monseq) // create vector
+     // representing
+      // the poly in R^(#monseq) with
+      // respect to the sequence of
+      // monomials of the system.
+      // check the parent object of the polynomial to create a vector over the right basering
+      QR := Parent(qrpoly);
+      vector := [BaseRing(QR) | 0 : i in [1..#monseq]];
+      M:=Monomials(qrpoly);
+      for i in [1..#M] do
+            	vector[Index(monseq, M[i])]:=MonomialCoefficient(qrpoly,M[i]);
+      end for;
+      return vector;
+end function;
+
+
+
+function vectortopoly(row, monseq) // the inverse of
+       // polytovector
+        n := #monseq;
+        if row eq [0 : x in [1..n]] then poly := 0;
+        else poly := &+[monseq[i]*row[i] : i in [1..#monseq] | row[i] ne 0];
+        end if;
+        return poly;
+end function;
+
+
+
+
+	q := 2^8;
+	t := 4;
+	s := t+1;
+	u := t+1;
+	v := t+1;
+	n := s*t+24;
+	m := s*u + s*v;
+	G<a>:=GF(q);
+	P<[x]> := PolynomialRing( G, n ) ;  
+        Z := IntegerRing();
+	pub,sec,L1,L2,A,B,C := NEW(s,t,u,v,n,q);
+
+
+
+//tries := 0;
+//success := 0;
+//repeat
+//tries +:= 1;
+
+
+//Encryption
+
+
+	plaintext := [Random(G) : i in [1..n]] ;
+
+ti := Cputime();
+	ciphertext := [Evaluate(pub[i], plaintext) : i in [1..m]]; 
+Cputime(ti);
+
+
+
+
+//Decryption
+
+ti := Cputime();
+        INVL2 := L2^(-1);
+        INVL1 := L1^(-1);
+        yb := [&+[INVL2[j][i]*ciphertext[i] : i in [1..m]] : j in [1..m]];
+
+
+        E1 := Matrix(G,s,u,[yb[i]: i in [1..s*u]]);
+        E2 := Matrix(G,s,v,[yb[i]: i in [s*u+1..m]]);
+        r1 := Rank(E1);
+        r2 := Rank(E2);
+
+        BX := Matrix(P,t,u,[P!B[i,j]: j in [1..u],i in [1..t]]);
+        CX := Matrix(P,t,v,[P!C[i,j]: j in [1..v],i in [1..t]]); 
+	CB := [];
+	CC := [];
+	for i in [1..t] do
+		for j in [1..u] do
+			CB[(i-1)*u+j] := [MonomialCoefficient(P!(B[i,j]), P.k): k in [1..n]];
+		end for;
+	end for;
+		
+	for i in [1..t] do
+		for j in [1..v] do
+			CC[(i-1)*v+j] := [MonomialCoefficient(P!(C[i,j]), P.k): k in [1..n]];
+		end for;
+	end for;
+		
+	var := n+t*s;
+        P1<[z]> := PolynomialRing( G, var) ;     
+        EP1 := Matrix(P1,s,u,[yb[i]: i in [1..s*u]]);
+        EP2 := Matrix(P1,s,v,[yb[i]: i in [s*u+1..m]]);
+        X := Matrix(P1,t,s,[z[(i-1)*s+j]: j in [1..s],i in [1..t]]);
+        BZ := ZeroMatrix(P1,t,u);
+        CZ := ZeroMatrix(P1,t,v);
+	for i in [1..t] do
+		for j in [1..u] do
+			BZ[i,j] :=  &+[CB[(i-1)*u+j][k]*z[k+t*s]: k in [1..n]];
+		end for;
+	end for;
+	for i in [1..t] do
+		for j in [1..v] do
+			CZ[i,j] :=  &+[CC[(i-1)*v+j][k]*z[k+t*s]: k in [1..n]];
+		end for;
+	end for;
+ 		
+        MFB := X*EP1-BZ;
+        MFC := X*EP2-CZ;
+        fun := [];
+        for i in [1..t] do
+              	for j in [1..u] do
+                    	fun[(i-1)*u+j] := MFB[i,j];
+               	end for;
+        end for;
+        for i in [1..t] do
+              	for j in [1..v] do
+                    	fun[t*u+(i-1)*v+j] := MFC[i,j];
+               	end for;
+        end for;		
+	coef := ZeroMatrix(G, t*u+t*v, var);
+	for i in [1..t*u+t*v] do
+		  for j in [1.. var] do
+		           coef[i,j] :=  Coefficient(fun[i],j,1);
+		  end for;
+	end for;
+
+
+	EchelonForm_coef := EchelonForm(coef);
+	sup := [z[i] : i in [1..n+t*s]];
+	EchelonForm_coef := RowSequence(EchelonForm_coef);
+	nrows := #EchelonForm_coef;
+	Fred := [vectortopoly(EchelonForm_coef[i], sup) : i in [1..nrows]];
+
+
+        UNZFred := [f : f in Fred | f ne 0];
+        // Create the set of univariate polynomiaals in Fred
+        UP := [f : f in UNZFred| IsUnivariate(f)];
+        // Create the set of univariate polynomials with a single root from UP
+         subst := {};
+         for r in UP  do
+                  a, b, var := IsUnivariate(r);
+                  root := Roots(UnivariatePolynomial(r))[1,1];
+                  Include(~subst, [Integers() | var, root]);
+         end for;
+	subst := Setseq(subst);
+	LIS := Fred;
+	LIS := Fred cat [P1!0: k in [1.. n+t*s-#LIS]];
+	LIS := [LIS[i]: i in [1..n+t*s]];
+ 	flag := #LIS;
+        for i in [1..flag] do
+             if (LeadingTerm(LIS[i]) ne z[i]) then 
+                 for j in [i..flag] do
+                   LIS[flag-j+i+1] := LIS[flag-j+i];
+                 end for;
+                   LIS[i] := z[i];
+       		   flag := #LIS;
+              end if;
+         end for;
+
+        gauss := [];
+        for i in [1..n] do
+            if (LIS[i+t*s] ne z[i+t*s]) then
+                gauss[i] := LeadingTerm(LIS[i+t*s]) - LIS[i+t*s];
+             else
+                gauss[i] := z[i+t*s];
+             end if;
+         end for;
+         for J in subst do
+		if (J[1] gt t*s) then
+                   gauss [J[1]-t*s] := J[2];
+		end if;
+         end for;
+
+        sub := [Evaluate(sec[i], gauss) - yb[i]: i in [1..m]];
+	sup := Setseq(&join{Seqset(Monomials(i)) : i in sub});
+        sup := ChangeUniverse(sup, ChangeOrder(P1, "lex"));
+        sup := Reverse(Sort(sup));
+	supgauss := Setseq(&join{Seqset(Monomials(i)) : i in gauss});
+        supgauss := ChangeUniverse(supgauss, ChangeOrder(P1, "lex"));
+        supgauss := Reverse(Sort(supgauss));
+	row := #sub;
+	col := #sup;
+	M := ZeroMatrix(G,row,col);
+	for i in [1..row] do
+		for j in [1..col] do
+			M[i,j] := MonomialCoefficient(sub[i], P1!(sup[j])) ;
+		end for;
+	end for;
+	solu := NullspaceMatrix( Transpose(M) );
+
+	ya := [];
+	ye := [];
+	for i in [1..#supgauss] do
+		flag := Z!(i*(i+1)/2);
+		ya[i] := Sqrt(solu[1][col-flag]);
+	end for;
+
+	for i in [1..#supgauss] do
+		ye[i] := ya[#supgauss-i+1];
+	end for;
+
+
+	velue := [0: i in [1..n+s*t-#supgauss]] cat ye;
+	yf := [];
+	for i in [1..n-#supgauss] do
+		yf[i] := Evaluate(gauss[i],velue);
+	end for;
+	yg := yf cat ye;
+	plaint := [&+[INVL1[j][i]*yg[i] : i in [1..n]] : j in [1..n]];
+//if (ye[1] eq 0) then
+	plaint;
+	plaintext;
+//end if;
+
+Cputime(ti);
+
+
+
+//until (tries gt 2^16);
+
+
+
+
+
+

@@ -1,0 +1,21 @@
+
+For standard Rainbow there are three modules for keygen, signature generation and verification. For the cyclic version you can use the standard signature generation.
+
+rainbowLRS - The file Verification.cpp contains code from different projects. The verification for RainbowLRS2 is provided by the function verifyRbLRS
+
+“Selecting and Reducing Key Sizes for Multivariate Cryptography”
+http://tuprints.ulb.tu-darmstadt.de/3523/1/thesis.pdf
+
+//
+
+"SSE Implementation of Multivariate PKCs on Modern x86 CPUs"
+http://precision.moscito.org/by-publ/recent/57470033.pdf
+
+"Practical-Sized Instances of Multivariate PKCs: Rainbow, 
+and $\ell$IC-derivatives"
+http://precision.moscito.org/by-publ/recent/mpkc-impl.pdf
+
+quartz 103,127  
+"QUARTZ, 128-Bit Long Digital Signatures"
+http://link.springer.com/chapter/10.1007%2F3-540-45353-9_21
+
