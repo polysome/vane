@@ -11,4 +11,6 @@ Lead developer David Carlier
 
 Developers; Milica Hadži-Tanović, Yiwen Sun, Thom Lauret
 
-Built with contributions from; John Baena, Tao Chengdong, Jintai Ding, Ming-Shing Chen, Albrecht Petzoldt and Ishtiaq Shah at www.cdc.informatik-tu-darmstadt.de
+This library could not have been written without generous contributions and guidance from; 
+
+John Baena, Tao Chengdong, Jintai Ding, Ming-Shing Chen, Albrecht Petzoldt and Ishtiaq Shah at www.cdc.informatik-tu-darmstadt.de
