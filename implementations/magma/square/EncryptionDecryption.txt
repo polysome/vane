@@ -1,0 +1,258 @@
+// Odd Characteristic Degree 2 MI with Projection
+// Encryption and Decryption
+
+// Crystal Clough
+// Began 9/10/08; Updated 9/10/08
+
+clear;
+
+//ChangeDirectory("C://Nuevo/Cryptography/MAGMA work"); GetCurrentDirectory();load "OddMIwithProjEncryptionDecryption.txt";
+//ChangeDirectory("F://MAGMA work"); GetCurrentDirectory();load "OddMIwithProjEncryptionDecryption.txt";
+//ChangeDirectory("E://MAGMA work"); GetCurrentDirectory();load "OddMIwithProjEncryptionDecryption.txt";
+
+// Here we are creating functions that will encrypt and decrypt 
+
+
+// Parameters:
+// q is the size of the base field k - MUST BE ODD OR ELSE CODE WON'T WORK!!
+// n is the size of the plaintext
+// l is the dim of the embedding
+// r is the dim of the projection
+
+//for master in [[31,28,3],[31,30,3],[31,32,3],[31,34,3]] do
+
+//for master in [[31,20,3],[31,22,3],[31,24,3],[31,26,3],[31,28,3],[31,30,3],[31,32,3],[31,34,3],[31,36,3],
+               //[43,20,3],[43,22,3],[43,24,3],[43,26,3],[43,28,3],[43,30,3],[43,32,3],[43,34,3],[43,36,3]] do
+//for master in [[13,36,4,3],[2,103,4,3]] do
+
+//SetOutputFile("encryptionDecryption.txt":Overwrite:=false );
+
+//q := master[1];    //q must be congruent to 3 mod 4 so decrypt3 can work
+//n := master[2];    //n+l must be odd so decrypt3 can work
+//l := master[3];
+
+q := 23;
+n := 11;
+l := 4;
+r := 1;
+
+npl := n+l;
+nplmr := npl - r;
+powerSquareRoot := Floor((q^npl+1)/4);
+//npl is the number of public key components i.e. the size of the ciphertext
+
+// *****
+// SETUP
+// *****
+
+k<a> := GF(q);
+
+kpoly<y> := PolynomialRing(k);
+
+g := IrreduciblePolynomial(k,npl);
+
+K<y> := quo < kpoly | [g] >; // This is iso to GF(q^{n+l})
+
+Kpoly<X> := PolynomialRing(K,1); // big X
+
+P1<[x]> := PolynomialRing(k,n); //little x[i]'s
+
+tminE := 10000000;
+tmaxE := -1;
+TimeSumEncrypt := 0;
+
+tminD3 := 10000000;
+tmaxD3 := -1;
+TimeSumDecrypt3 := 0;
+
+triesMin := 10000000;
+triesMax := -1;
+TriesSumDecrypt := 0;
+
+REP1 := 10;
+REP2 := 100;
+
+//for Itera1 in [1..REP1] do
+
+// Now to create the affine maps L1 and L2
+// L2 should be invertible k^{n+l} -> k^{n+l}, but L1 should be injective k^n -> k^{n+l}, hence checking the rank.
+// This is because the "projection" system is being implemented as an "embedding" system.
+
+// Want L2(z)=L21*z + L22, so:
+repeat
+	L21 := Matrix(k,npl,npl,[Random(k): i,j in [1..npl]]);
+until Determinant(L21) ne 0;
+L21Inv := L21^(-1);
+L22 := Matrix(k,npl,1,[Random(k): i in [1..npl]]);
+
+
+// Want L1(z)=L11*z + L12, so:
+repeat
+	L11 := Matrix(k,npl,n,[Random(k): i in [1..npl], j in [1..n]]);
+until Rank(L11) eq n;
+L12 := Matrix(k,npl,1,[Random(k): i in [1..npl]]);
+
+
+// **********************************
+// GENERATING THE ENCRYPTION FUNCTION
+// **********************************
+
+encrypt := function(plaintext); // plaintext should be a list [_, _, ... _] of n values in k
+
+// Apply L1.  The result should be an npl-tuple:
+L1ofPlaintext := L11*Matrix(k,n,1,plaintext) + L12;
+
+// Then lift to the big field; ie apply "phi":
+//(but not nec to work in K; since working in the quotient field is costly work in kpoly whenever possible)
+lift := kpoly!0;
+for i in [1..npl] do
+	lift +:= L1ofPlaintext[i,1]*(kpoly!y^(i-1));
+end for;
+
+//Apply F, the core map.  Since it's just X^2 I haven't defined a separate function.
+FofLift := K!lift^2;
+
+//Back to the vector space via "phi inverse":
+push := Matrix(k,npl,1,[Coefficient(K!FofLift,i-1): i in [1..npl]]);
+
+//Apply L2:
+ciphertext := L21*push + L22;
+
+Ciphertext := [ciphertext[i,1]: i in [1..nplmr]]; // change from a matrix to a list
+
+return Ciphertext;
+end function;
+
+
+
+// **********************************
+// GENERATING THE DECRYPTION FUNCTION 3
+// **********************************
+
+decrypt3 := function(ciphertext); // ciphertext should be a list [_, _, ... _] of n+l values in k
+
+ciphertext := ciphertext cat [k!0];
+dummyList := [i : i in [0..(q-1)]];
+dummy1 := false;
+
+while dummy1 ne true do
+
+lastComponent := Random(dummyList);
+ciphertext[npl] := lastComponent;
+
+// Apply L2^(-1).  The result should be an npl-tuple:
+L2InvofCiphertext := L21Inv * (Matrix(k,npl,1,ciphertext) - L22);
+
+// Then lift to the big field; ie apply "phi":
+//(but not nec to work in K; since working in the quotient field is costly work in kpoly whenever possible)
+lift := kpoly!0;
+for i in [1..npl] do
+	lift +:= L2InvofCiphertext[i,1]*(kpoly!y^(i-1));
+end for;
+
+//Apply F, the core map.  Since it's just X^2 I haven't defined a separate function.
+FInvofLift := (K!lift)^powerSquareRoot;
+
+//Back to the vector space via "phi inverse":
+push := Matrix(k,npl,1,[Coefficient(FInvofLift,i-1): i in [1..npl]]);
+
+//dummy := IsConsistent(Transpose(L11),Transpose(push - L12));
+
+if IsConsistent(Transpose(L11),Transpose(push - L12)) then
+   
+   //Apply L1^(-1):
+   plaintext := Solution(Transpose(L11),Transpose(push - L12));
+   dummy1 := true;
+
+else
+
+   FInvofLift := -FInvofLift;
+
+   //Back to the vector space via "phi inverse":
+   push := Matrix(k,npl,1,[Coefficient(FInvofLift,i-1): i in [1..npl]]);
+   
+   if IsConsistent(Transpose(L11),Transpose(push - L12)) then
+      //Apply L1^(-1):
+      plaintext := Solution(Transpose(L11),Transpose(push - L12));
+      dummy1 := true;
+   else   
+      Exclude(~dummyList,lastComponent);
+   end if;
+
+end if;
+
+end while;
+
+Plaintext := [plaintext[1,i]: i in [1..n]]; // change from a matrix to a list
+dummyTries := q - #dummyList + 1;
+return Plaintext,dummyTries;
+end function;
+
+
+//
+// ****************************************************
+// Encrypting
+
+
+//for Itera2 in [1..REP2] do  //repetitions of encrypting
+
+//Random plaintext
+plainText := [Random(k): i in [1..n]];
+
+//Encryption of random plaintext
+t := Cputime();
+   cipherText := encrypt(plainText);
+tEncrypt := Cputime(t);
+
+//
+// Decrypting
+//
+
+//Decryption3 of ciphertext using power formula x^((q^npl+1)/4)
+t := Cputime();
+   plainText3, Tries := decrypt3(cipherText);
+tDecrypt3 := Cputime(t);
+
+TimeSumEncrypt +:= tEncrypt;
+TimeSumDecrypt3 +:= tDecrypt3;
+TriesSumDecrypt +:= Tries;
+
+if tEncrypt lt tminE then
+   tminE := tEncrypt;
+end if;
+
+if tEncrypt gt tmaxE then
+   tmaxE := tEncrypt;
+end if;
+
+if tDecrypt3 lt tminD3 then
+   tminD3 := tDecrypt3;
+end if;
+
+if tDecrypt3 gt tmaxD3 then
+   tmaxD3 := tDecrypt3;
+end if;
+
+if Tries lt triesMin then
+   triesMin := Tries;
+end if;
+
+if Tries gt triesMax then
+   triesMax := Tries;
+end if;
+
+//end for;   //for Itera2
+
+//end for;   //for Itera1
+
+TAEncrypt := TimeSumEncrypt/(REP1*REP2);
+TADecrypt3 := TimeSumDecrypt3/(REP1*REP2);
+TriesAverage := 1.0*TriesSumDecrypt/(REP1*REP2);
+
+print q,n,l,TAEncrypt,tminE,tmaxE,TADecrypt3,tminD3,tmaxD3,TriesAverage,triesMin,triesMax,REP1*REP2,"#";
+
+
+//UnsetOutputFile() ;
+
+
+//end for;   //for master
