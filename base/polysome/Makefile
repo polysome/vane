@@ -11,7 +11,6 @@ SRCS+=			skein/threefishApi.c skein/threefish256Block.c
 SRCS+=			skein/threefish512Block.c skein/threefish1024Block.c
 SRCS+=			skein/skein_block.c skein/skein.c
 
-SRCS+=		   basic.c keygenLRS.c
 SRCS+=			quad/quad256.c
 
 CFLAGS+=		-I${.CURDIR}/. -I${.CURDIR}/abc -I${.CURDIR}/skein/include -I${.CURDIR}/quad
@@ -26,7 +25,8 @@ CLEANFILES+=		${.CURDIR}/*.core
 DEBUGLIBS=		yes
 
 keygenLRStest:
-			cc -g -O0 -o keygenLRStest keygenLRStest.c -std=c99 -fpie -pie -I. -L. 
+			cc -g -O0 -shared -o libkeygenLRS.so basic.c keygenLRS.c -fpie -pie -I. -L. -lm4ri -lm4rie
+			cc -g -O0 -o keygenLRStest keygenLRStest.c -std=c99 -fpie -pie -I. -L. -lm4ri -lm4rie
 
 test:
 			cc -g -O0 -o test test.c -std=c99 -fpie -pie -I. -L. -lvane -lm
