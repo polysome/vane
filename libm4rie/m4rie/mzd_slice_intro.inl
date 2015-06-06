@@ -1,0 +1,23 @@
+#define matrix_t mzd_slice_t
+#define matrix_set_ui mzd_slice_set_ui
+#define matrix_write_elem mzd_slice_write_elem
+
+#define matrix_init_window mzd_slice_init_window
+#define matrix_free_window mzd_slice_free_window
+
+#define matrix_addmul mzd_slice_addmul
+
+#define matrix_apply_p_right mzd_slice_apply_p_right
+
+#define matrix_trsm_lower_left mzd_slice_trsm_lower_left
+#define _matrix_trsm_lower_left _mzd_slice_trsm_lower_left
+#define matrix_trsm_lower_left_naive mzd_slice_trsm_lower_left_naive
+#define matrix_trsm_lower_left_newton_john mzd_slice_trsm_lower_left_newton_john
+#define matrix_trsm_upper_left mzd_slice_trsm_upper_left
+#define _matrix_trsm_upper_left _mzd_slice_trsm_upper_left
+#define matrix_trsm_upper_left_naive mzd_slice_trsm_upper_left_naive
+#define matrix_trsm_upper_left_newton_john mzd_slice_trsm_upper_left_newton_john
+
+
+#define matrix_ple mzd_slice_ple
+#define matrix_pluq mzd_slice_pluq
