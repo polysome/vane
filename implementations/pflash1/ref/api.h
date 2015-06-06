@@ -1,5 +1,0 @@
-#include "sizes.h"
-
-#define CRYPTO_SECRETKEYBYTES L_PRI
-#define CRYPTO_PUBLICKEYBYTES L_PUB
-#define CRYPTO_BYTES L_SIGN
