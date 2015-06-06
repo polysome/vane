@@ -28,6 +28,7 @@ keygenLRStest:
 			cc -g -O0 -shared -o libkeygenLRS.so basic.c keygenLRS.c -fpie -pie -I. -L. -lm4ri -lm4rie
 			cc -g -O0 -o keygenLRStest keygenLRStest.c -std=c99 -fpie -pie -I. -L. -lm4ri -lm4rie
 
+
 test:
 			cc -g -O0 -o test test.c -std=c99 -fpie -pie -I. -L. -lvane -lm
 shx_test:
