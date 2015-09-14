@@ -16,7 +16,7 @@ Supported implementations
 Credits
 =======
 
-Lead developer David Carlier.
+Lead developer David Carlier.<br />
 Milica Hadži-Tanović<br />
 Yiwen Sun<br />
 Thom Lauret<br />
