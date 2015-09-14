@@ -1,7 +1,7 @@
 vane
 ====
 
-vane is a GPLv3 multivariate cryptographic library written in C
+vane is an open source post quantum crypto library written in C.
 
 Supported implementations;
 
