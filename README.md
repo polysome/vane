@@ -3,7 +3,8 @@ vane
 
 vane is an open source post quantum crypto library written in C.
 
-Supported implementations;
+Supported implementations
+=========================
 
 • threshold ring signature scheme<br />
 • the simple matrix scheme / ABC<br />
@@ -11,9 +12,11 @@ Supported implementations;
 • QUAD (cyclic, LRS)<br />
 • extended serpent-threefish cascade blockcipher<br />
 
-Lead developer David Carlier
 
-Developers;<br />
+Credits
+=======
+
+Lead developer David Carlier.
 Milica Hadži-Tanović<br />
 Yiwen Sun<br />
 Thom Lauret<br />
