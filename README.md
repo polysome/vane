@@ -13,7 +13,8 @@ extended serpent-threefish cascade blockcipher<br />
 
 Lead developer David Carlier
 
-Developers; Milica Hadži-Tanović<br />
+Developers;<br />
+Milica Hadži-Tanović<br />
 Yiwen Sun<br />
 Thom Lauret<br />
 
