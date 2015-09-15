@@ -1,7 +1,7 @@
 vane
 ====
 
-vane is an open source post quantum crypto library written in C.
+an open source post quantum crypto library written in C.
 
 Supported implementations
 =========================
