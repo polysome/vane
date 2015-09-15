@@ -23,7 +23,7 @@ Thom Lauret<br />
 
 This library could not have been written without generous contributions and guidance from; 
 
-Albrecht Petzoldt and Ishtiaq Shah at www.cdc.informatik-tu-darmstadt.de
+Albrecht Petzoldt and Ishtiaq Shah at www.cdc.informatik-tu-darmstadt.de<br />
 John Baena<br /> 
 Tao Chengdong<br />
 Jintai Ding<br />
