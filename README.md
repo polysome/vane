@@ -6,10 +6,10 @@ vane is an open source post quantum crypto library written in C.
 Supported implementations
 =========================
 
-• threshold ring signature scheme<br />
-• the simple matrix scheme / ABC<br />
-• rainbow (cyclic, LRS)<br />
-• QUAD (cyclic, LRS)<br />
+• [The Threshold Ring Signature Scheme](https://github.com/polysome/vane/blob/master/documentation/Threshold.pdf)<br />
+• [The Simple Matrix Scheme / ABC](https://github.com/polysome/vane/blob/master/documentation/ABC.pdf)<br />
+• [Rainbow](https://github.com/polysome/vane/blob/master/documentation/Rainbow.pdf) ([cyclic, LRS](https://github.com/polysome/vane/blob/master/documentation/Albrecht%20Petzoldt%20thesis.pdf))<br />
+• [QUAD](https://github.com/polysome/vane/blob/master/documentation/QUAD.pdf) ([cyclic, LRS](https://github.com/polysome/vane/blob/master/documentation/Albrecht%20Petzoldt%20thesis.pdf))<br />
 • extended serpent-threefish cascade blockcipher<br />
 
 
@@ -23,8 +23,8 @@ Thom Lauret<br />
 
 This library could not have been written without generous contributions and guidance from; 
 
+Albrecht Petzoldt and Ishtiaq Shah at www.cdc.informatik-tu-darmstadt.de
 John Baena<br /> 
 Tao Chengdong<br />
 Jintai Ding<br />
 Ming-Shing Chen<br />
-Albrecht Petzoldt and Ishtiaq Shah at www.cdc.informatik-tu-darmstadt.de
