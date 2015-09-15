@@ -6,7 +6,7 @@ vane is an open source post quantum crypto library written in C.
 Supported implementations
 =========================
 
-• [The Threshold Ring Signature Scheme](https://github.com/polysome/vane/blob/master/documentation/Threshold.pdf)<br />
+• [A Multivariate based Threshold Ring Signature Scheme](https://github.com/polysome/vane/blob/master/documentation/Threshold.pdf)<br />
 • [The Simple Matrix Scheme / ABC](https://github.com/polysome/vane/blob/master/documentation/ABC.pdf)<br />
 • [Rainbow](https://github.com/polysome/vane/blob/master/documentation/Rainbow.pdf) ([cyclic, LRS](https://github.com/polysome/vane/blob/master/documentation/Albrecht%20Petzoldt%20thesis.pdf))<br />
 • [QUAD](https://github.com/polysome/vane/blob/master/documentation/QUAD.pdf) ([cyclic, LRS](https://github.com/polysome/vane/blob/master/documentation/Albrecht%20Petzoldt%20thesis.pdf))<br />
